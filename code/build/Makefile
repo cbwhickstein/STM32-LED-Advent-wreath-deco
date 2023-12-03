@@ -4,7 +4,7 @@ LD = arm-none-eabi-ld
 BIN = arm-none-eabi-objcopy
 STL = st-flash
 CFLAGS = -mthumb -mcpu=cortex-m3 #STM32 Properties (see stm32f103 datasheet)
-CADDFLAGS = -g -Wall
+CADDFLAGS = -g -Wall -Wextra
 
 SRC_PATH = ../src
 SRC = $(wildcard $(SRC_PATH)/*.c)
@@ -45,3 +45,6 @@ erase:
 debug:
 	gnome-terminal -- openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg
 	gdb-multiarch app.elf -ex "target remote localhost:3333"
+
+dissasable:
+	arm-none-eabi-objdump -d obj/main.o | less

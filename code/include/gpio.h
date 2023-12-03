@@ -10,14 +10,14 @@
 
 typedef struct
 {
-    uint32_t CRL;   //configuration register low 
-    uint32_t CRH;   //configuration register high
-    uint32_t IDR;   //input data register
-    uint32_t ODR;   //output data register 
-    uint32_t BSRR;  //bit set/reset register
-    uint32_t BRR;   //bit reset register
-    uint32_t LCKR;  //configuration lock register 
-}GPIO;
+    volatile uint32_t CRL;   //configuration register low 
+    volatile uint32_t CRH;   //configuration register high
+    volatile uint32_t IDR;   //input data register
+    volatile uint32_t ODR;   //output data register 
+    volatile uint32_t BSRR;  //bit set/reset register
+    volatile uint32_t BRR;   //bit reset register
+    volatile uint32_t LCKR;  //configuration lock register 
+}GPIO_t;
 
 
 /**
@@ -342,7 +342,7 @@ typedef struct
  * 
  */
 
-void gpio_config(char port, uint8_t num, uint8_t mode, uint8_t cnf);
+void gpio_config(char port, uint8_t num, uint32_t mode, uint32_t cnf);
 void gpio_set(char port, uint8_t num, uint8_t state);
 
 /**
@@ -383,23 +383,23 @@ void gpio_set(char port, uint8_t num, uint8_t state);
  *      gpio_config('c', 8, GPIO_CRX_MODE_OUTPUT_10MHZ, GPIO_CRX_CNF_OUT_AF_OPEN_DRAIN)
  * 
  */
-void gpio_config(char port, uint8_t num, uint8_t mode, uint8_t cnf) {
-    GPIO* gpio_port;
+void gpio_config(char port, uint8_t num, uint32_t mode, uint32_t cnf) {
+    volatile GPIO_t* gpio_port;
     uint8_t num_mode_offset;
     uint8_t num_cnf_offset;
     uint32_t num_mode_bits;
     uint32_t num_cnf_bits;
 
     switch (port) {
-        case 'a': gpio_port = (GPIO*)GPIO_BASE_ADDR_A; break;
-        case 'b': gpio_port = (GPIO*)GPIO_BASE_ADDR_B; break;
-        case 'c': gpio_port = (GPIO*)GPIO_BASE_ADDR_C; break;
-        case 'd': gpio_port = (GPIO*)GPIO_BASE_ADDR_D; break;
-        case 'e': gpio_port = (GPIO*)GPIO_BASE_ADDR_E; break;
-        case 'f': gpio_port = (GPIO*)GPIO_BASE_ADDR_F; break;
-        case 'g': gpio_port = (GPIO*)GPIO_BASE_ADDR_G; break;
+        case 'a': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_A; break;
+        case 'b': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_B; break;
+        case 'c': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_C; break;
+        case 'd': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_D; break;
+        case 'e': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_E; break;
+        case 'f': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_F; break;
+        case 'g': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_G; break;
         
-        default: gpio_port = (GPIO*)GPIO_BASE_ADDR_A; break;
+        default: gpio_port = (GPIO_t*)GPIO_BASE_ADDR_A; break;
     }
 
     switch (num) {
@@ -516,8 +516,8 @@ void gpio_config(char port, uint8_t num, uint8_t mode, uint8_t cnf) {
     }
     else {
         gpio_port->CRH &= !(num_mode_bits | num_cnf_bits);
-        gpio_port->CRH |= ( mode << num_mode_offset |
-                            cnf << num_cnf_offset   );
+        gpio_port->CRH |= ( (mode << num_mode_offset) |
+                            (cnf << num_cnf_offset)   );
     }
 }
 
@@ -534,21 +534,21 @@ void gpio_config(char port, uint8_t num, uint8_t mode, uint8_t cnf) {
  * 
  */
 void gpio_set(char port, uint8_t num, uint8_t state) {
-    GPIO* gpio_port;
-    uint8_t num_offset;
-    uint8_t num_bits;
+    volatile GPIO_t* gpio_port;
+    uint32_t num_offset;
+    uint32_t num_bits;
     uint8_t new_state;
 
     switch (port) {
-        case 'a': gpio_port = (GPIO*)GPIO_BASE_ADDR_A; break;
-        case 'b': gpio_port = (GPIO*)GPIO_BASE_ADDR_B; break;
-        case 'c': gpio_port = (GPIO*)GPIO_BASE_ADDR_C; break;
-        case 'd': gpio_port = (GPIO*)GPIO_BASE_ADDR_D; break;
-        case 'e': gpio_port = (GPIO*)GPIO_BASE_ADDR_E; break;
-        case 'f': gpio_port = (GPIO*)GPIO_BASE_ADDR_F; break;
-        case 'g': gpio_port = (GPIO*)GPIO_BASE_ADDR_G; break;
+        case 'a': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_A; break;
+        case 'b': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_B; break;
+        case 'c': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_C; break;
+        case 'd': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_D; break;
+        case 'e': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_E; break;
+        case 'f': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_F; break;
+        case 'g': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_G; break;
         
-        default: gpio_port = (GPIO*)GPIO_BASE_ADDR_A; break;
+        default: gpio_port = (GPIO_t*)GPIO_BASE_ADDR_A; break;
     }
 
     switch (num) {
