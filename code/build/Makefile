@@ -7,30 +7,38 @@ CFLAGS = -mthumb -mcpu=cortex-m3 #STM32 Properties (see stm32f103 datasheet)
 CADDFLAGS = -g -Wall
 
 SRC_PATH = ../src
-SRC = $(SRC_PATH)/*.c
+SRC = $(wildcard $(SRC_PATH)/*.c)
 
 INC_PATH = ../include
-CFLAGS += -I INC_PATH
+CFLAGS += -I $(INC_PATH)
 
-all: app.bin
+OBJ_PATH = ./obj
+COMPILE_OBJ = $(patsubst $(SRC_PATH)/%.c, $(OBJ_PATH)/%.o, $(SRC))
+
+all: create_obj_folder app.bin
+
+create_obj_folder:
+	mkdir -p obj
 
 crt.o: crt.s
-	$(AS) -o crt.o crt.s
+	$(AS) -o $(OBJ_PATH)/crt.o crt.s
 
-compile:
-	$(CC) $(CFLAGS) -c $(CADDFLAGS) -o main.o $(SRC)
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+	$(CC) $(CFLAGS) -c $(CADDFLAGS) -o $@ $<
 
-app.elf: linker.ld crt.o compile
-	$(LD) -T linker.ld -o app.elf crt.o main.o
+app.elf: linker.ld crt.o $(COMPILE_OBJ)
+	$(LD) -T linker.ld -o app.elf $(OBJ_PATH)/*.o
 
 app.bin: app.elf
 	$(BIN) -O binary app.elf app.bin
 
 clean:
 	rm -f *.o *.elf *.bin
+	rm -rf obj
 
 flash: app.bin
 	$(STL) write app.bin 0x8000000
 
 erase:
 	$(STL) erase
+
