@@ -42,3 +42,6 @@ flash: app.bin
 erase:
 	$(STL) erase
 
+debug:
+	gnome-terminal -- openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg
+	gdb-multiarch app.elf -ex "target remote localhost:3333"
