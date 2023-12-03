@@ -1,18 +1,16 @@
 #include <stdint.h>
+#include <gpio.h>
 
 #define GPIO_B_BASE_ADDR 0x40010C00
 #define DELAY_CYCLES 1000000
 
 int main() {
-    uint32_t* gpio_conf_low =  (uint32_t*)(GPIO_B_BASE_ADDR + 0x0);
-    uint32_t* gpio_output_data = (uint32_t*)(GPIO_B_BASE_ADDR + 0x0C);
-    
-    *gpio_conf_low = 0b01; //set GPIO B0 to outputmode 10MHz push pull
+    gpio_config('b', 0, GPIO_CRX_MODE_OUTPUT_10MHZ, GPIO_CRX_CNF_OUT_GP_PUSH_PULL);
 
     while(1) {
-        *gpio_output_data = 0; //set the led to other state
+        gpio_set('b', 0, 0);
         for (volatile int i = 0; i < DELAY_CYCLES; i++);
-        *gpio_output_data = 1; //set the led to other state
+        gpio_set('b', 0, 1); //set the led to other state
         for (volatile int i = 0; i < DELAY_CYCLES; i++);
     }
 }
