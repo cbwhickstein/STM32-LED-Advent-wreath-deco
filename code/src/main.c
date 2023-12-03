@@ -1,10 +1,13 @@
 #include <stdint.h>
 #include <gpio.h>
+#include <rcc.h>
 
 #define GPIO_B_BASE_ADDR 0x40010C00
 #define DELAY_CYCLES 1000000
 
 int main() {
+    enable_all_IO_ports();
+
     gpio_config('b', 0, GPIO_CRX_MODE_OUTPUT_10MHZ, GPIO_CRX_CNF_OUT_GP_PUSH_PULL);
 
     while(1) {
