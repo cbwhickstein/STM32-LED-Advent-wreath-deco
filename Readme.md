@@ -9,3 +9,6 @@
 
 # Breadboard test
 ![](doc/pictures/breadboard.gif)
+
+# Finished Project
+![](doc/pictures/advent_wreath.gif)
