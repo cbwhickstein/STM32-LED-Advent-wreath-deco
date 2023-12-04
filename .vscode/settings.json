@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.S": "arm",
+        "*.rst": "markdown",
+        "random": "c"
+    }
+}

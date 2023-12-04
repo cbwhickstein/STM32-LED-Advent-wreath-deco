@@ -8,7 +8,7 @@
  * 
  */
 
-typedef struct
+typedef struct _GPIO_t
 {
     volatile uint32_t CRL;   //configuration register low 
     volatile uint32_t CRH;   //configuration register high
@@ -385,8 +385,8 @@ void gpio_set(char port, uint8_t num, uint8_t state);
  */
 void gpio_config(char port, uint8_t num, uint32_t mode, uint32_t cnf) {
     volatile GPIO_t* gpio_port;
-    uint8_t num_mode_offset;
-    uint8_t num_cnf_offset;
+    uint32_t num_mode_offset;
+    uint32_t num_cnf_offset;
     uint32_t num_mode_bits;
     uint32_t num_cnf_bits;
 
@@ -510,12 +510,12 @@ void gpio_config(char port, uint8_t num, uint32_t mode, uint32_t cnf) {
 
     //clear and set the mode and cnf bits
     if (num < 8) {
-        gpio_port->CRL &= !(num_mode_bits | num_cnf_bits);
-        gpio_port->CRL |= ( mode << num_mode_offset |
-                            cnf << num_cnf_offset   );
+        gpio_port->CRL &= ~(num_mode_bits | num_cnf_bits);
+        gpio_port->CRL |= ( (mode << num_mode_offset) |
+                            (cnf << num_cnf_offset)   );
     }
     else {
-        gpio_port->CRH &= !(num_mode_bits | num_cnf_bits);
+        gpio_port->CRH &= ~(num_mode_bits | num_cnf_bits);
         gpio_port->CRH |= ( (mode << num_mode_offset) |
                             (cnf << num_cnf_offset)   );
     }
@@ -537,7 +537,7 @@ void gpio_set(char port, uint8_t num, uint8_t state) {
     volatile GPIO_t* gpio_port;
     uint32_t num_offset;
     uint32_t num_bits;
-    uint8_t new_state;
+    uint32_t new_state;
 
     switch (port) {
         case 'a': gpio_port = (GPIO_t*)GPIO_BASE_ADDR_A; break;

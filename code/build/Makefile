@@ -15,7 +15,7 @@ CFLAGS += -I $(INC_PATH)
 OBJ_PATH = ./obj
 COMPILE_OBJ = $(patsubst $(SRC_PATH)/%.c, $(OBJ_PATH)/%.o, $(SRC))
 
-all: create_obj_folder app.bin
+all: clean create_obj_folder app.bin
 
 create_obj_folder:
 	mkdir -p obj
@@ -36,7 +36,7 @@ clean:
 	rm -f *.o *.elf *.bin
 	rm -rf obj
 
-flash: app.bin
+flash: all
 	$(STL) write app.bin 0x8000000
 
 erase:
